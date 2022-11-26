@@ -22,7 +22,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			wait();
 		}
 		buffer[in] = msg;
-		in = in + 1 % bufferSz;
+		in = (in + 1) % bufferSz;
 		nempty++;
 		nfull--;
 		notifyAll();		
@@ -34,7 +34,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			wait();
 		}
 		Message msg = buffer[out];
-		out = out + 1 % bufferSz;
+		out = (out + 1) % bufferSz;
 		nempty--;
 		nfull++;
 		notifyAll();
