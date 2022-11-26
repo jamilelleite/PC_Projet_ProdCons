@@ -16,7 +16,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		this.nempty = 0;
 	}
 
-	@Override
+	
 	public synchronized void put(Message msg) throws InterruptedException {
 		while (nfull == 0) {
 			wait();
@@ -28,7 +28,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		notifyAll();		
 	}
 
-	@Override
+	
 	public synchronized Message get() throws InterruptedException {
 		while (nempty == 0) {
 			wait();
@@ -41,12 +41,12 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		return msg;
 	}
 
-	@Override
+	
 	public int nmsg() {
-		return 0;
+		return nempty;
 	}
 
-	@Override
+	
 	public int totmsg() {
 		return 0;
 	}
