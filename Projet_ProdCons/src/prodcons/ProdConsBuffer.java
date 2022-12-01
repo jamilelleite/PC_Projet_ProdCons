@@ -20,7 +20,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		mutex = new Semaphore(1);
 	}
 
-	@Override
 	public void put(Message msg) throws InterruptedException {
 		notFull.acquire();
 		mutex.acquire();
@@ -30,7 +29,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		notEmpty.release();
 	}
 
-	@Override
 	public Message get() throws InterruptedException {
 		notEmpty.acquire();
 		mutex.acquire();
@@ -41,12 +39,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		return msg;
 	}
 
-	@Override
 	public int nmsg() {
 		return 0;
 	}
 
-	@Override
 	public int totmsg() {
 		return 0;
 	}
