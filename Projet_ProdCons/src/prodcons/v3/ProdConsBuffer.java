@@ -6,52 +6,39 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	int bufferSz;
 	Message buffer[];
-	int nfull;
-	int nempty;
 	Semaphore notEmpty;
 	Semaphore notFull;
-	Semaphore Mutex;
+	Semaphore Mutex1, Mutex2;
 	int in = 0;
 	int out = 0;
 	
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
-		this.nfull = bufferSz;
-		this.nempty = 0;
-		notEmpty = new Semaphore(nempty);
-		notFull = new Semaphore(nfull);
-		Mutex = new Semaphore(1);
+		notEmpty = new Semaphore(bufferSz);
+		notFull = new Semaphore(0);
+		Mutex1 = new Semaphore(1);
+		Mutex2 = new Semaphore(1);
 	}
 
 	
 	public void put(Message msg) throws InterruptedException {
-		while (nfull == 0) {
-			wait();
-		}
 		notFull.acquire();
-		Mutex.acquire();
+		Mutex1.acquire();
 		buffer[in] = msg;
 		in = (in + 1) % bufferSz;
-		nempty++;
-		nfull--;
-		Mutex.release();
+		Mutex1.release();
 		notifyAll();
 		notEmpty.release();
 	}
 
 	
 	public Message get() throws InterruptedException {
-		while (nempty == 0) {
-			wait();
-		}
 		notEmpty.acquire();
-		Mutex.acquire();
+		Mutex2.acquire();
 		Message msg = buffer[out];
 		out = (out + 1) % bufferSz;
-		nempty--;
-		nfull++;
-		Mutex.release();
+		Mutex2.release();
 		notifyAll();
 		notFull.release();
 		return msg;
@@ -59,7 +46,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	
 	public int nmsg() {
-		return nempty;
+		return 0;
 	}
 
 	
