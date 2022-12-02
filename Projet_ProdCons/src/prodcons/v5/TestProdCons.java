@@ -1,4 +1,4 @@
-package prodcons.v1;
+package prodcons.v5;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +21,13 @@ public class TestProdCons {
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
+		//Avant de tout test, vérifie la valeur des producteurs et consommateur dans ton xml pour te rassurer 
+		//que ce que tu cherche à prouver fonctionne bien
+		
+		//Pour celui-ci, il faut se rassurer que le nombre de producteur soit un multiple du nombre de consommateur
+		//Se  multiple est trouvé par la valeur de K (producteur = k * consommateur)
+		//La limite de se code c'est que, les lecture et les écriture ne se font pas de manière bouclé
+		//donc le nombre de consommateur doit être égale au nombre de producteur sinon le code ne termine pas
 		loadData();
 		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz);
 		Message msg1 = new Message("test1");
@@ -30,9 +37,15 @@ public class TestProdCons {
 		
 		for(int i = 0; i<nProd; i++)
 			prods[i] = new Producteur(pcbuffer, msg1);
-		
+	
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
+		
+		for(int i = 0; i<nCons; i++)
+			System.out.println("Consumers are " + cons[i].getName() + "\n");
+		
+		for(int i = 0; i<nProd; i++)
+			System.out.println("Producers are " + prods[i].getName() + "\n");
 		
 		for(int i = 0; i<prods.length; i++)
 				prods[i].join();
