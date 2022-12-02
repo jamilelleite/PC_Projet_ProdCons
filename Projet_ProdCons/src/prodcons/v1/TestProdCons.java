@@ -20,20 +20,25 @@ public class TestProdCons {
 		minProd = Integer.parseInt(propreties.getProperty("minProd"));
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
-	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException{
+	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
 		loadData();
-		
 		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz);
-		
 		Message msg1 = new Message("test1");
 		
-		Consommateur c1 = new Consommateur(pcbuffer);
-		Consommateur c2 = new Consommateur(pcbuffer);
-		Producteur p1 = new Producteur(pcbuffer, msg1);
-		Producteur p2 = new Producteur(pcbuffer, msg1);
-		Producteur p3 = new Producteur(pcbuffer, msg1);
+		Producteur[] prods = new Producteur[nProd];
+		Consommateur[] cons = new Consommateur[nCons];
 		
-		 
+		for(int i = 0; i<nProd; i++)
+			prods[i] = new Producteur(pcbuffer, msg1);
+		
+		for(int i = 0; i<nCons; i++)
+			cons[i] = new Consommateur(pcbuffer);
+		
+		for(int i = 0; i<prods.length; i++)
+				prods[i].join();
+		for(int i = 0; i<cons.length; i++)
+			cons[i].join();
+		
 	}
 
 }
