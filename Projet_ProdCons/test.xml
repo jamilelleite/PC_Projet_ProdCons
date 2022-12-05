@@ -3,9 +3,9 @@
 <properties>
     <entry key="nProd">20</entry>
     <entry key="nCons">2</entry>
-    <entry key="bufSz">100</entry>
+    <entry key="bufSz">1</entry>
     <entry key="prodTime">100</entry>
     <entry key="consTime">300</entry>
     <entry key="minProd">30</entry>
-    <entry key="maxProd">100</entry>
+    <entry key="maxProd">50</entry>
 </properties>

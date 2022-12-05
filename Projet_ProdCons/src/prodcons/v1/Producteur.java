@@ -2,7 +2,7 @@ package prodcons.v1;
 
 public class Producteur extends Thread{
 	ProdConsBuffer pcbuffer;
-	Message msg;
+	public Message msg;
 
 	public Producteur(ProdConsBuffer pcbuffer, Message msg) {
 		this.pcbuffer = pcbuffer;

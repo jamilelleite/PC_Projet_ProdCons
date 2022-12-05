@@ -23,20 +23,13 @@ public class TestProdCons {
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
-		//Avant de tout test, vérifie la valeur des producteurs et consommateur dans ton xml pour te rassurer 
-		//que ce que tu cherche à prouver fonctionne bien
-				
-		//Pour celui-ci, il faut se rassurer que le nombre de producteur soit un multiple du nombre de consommateur
-		//Se  multiple est trouvé par la valeur de K (consommateur = k * producteur)
-		//La limite de se code c'est que, les lecture et les écriture ne se font pas de manière bouclé
-		//donc le nombre de consommateur doit être égale au nombre de producteur sinon le code ne termine pas
 		
 		loadData();// data from xml file
 		Random rand; //Used to generate a random number of messages
 		int nmsg = (int) (Math.random() * (maxProd - minProd)); //the number of messages
 		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime);
 		Message[] msgs; //Table of all generated messages
-		
+		System.out.println(bufSz);
 		Producteur[] prods = new Producteur[nProd]; //Table of all producers
 		Consommateur[] cons = new Consommateur[nCons]; ////Table of all consumers 
 		

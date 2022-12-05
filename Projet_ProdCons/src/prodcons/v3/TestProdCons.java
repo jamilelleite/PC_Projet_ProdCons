@@ -1,20 +1,17 @@
 package prodcons.v3;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import prodcons.v1.Consommateur;
-import prodcons.v1.Message;
-import prodcons.v1.ProdConsBuffer;
-import prodcons.v1.Producteur;
+import java.util.Random;
 
 public class TestProdCons {
 	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
 
 	static void loadData() throws InvalidPropertiesFormatException, IOException{
 		Properties propreties = new Properties();
-		propreties.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("test.xml"));
+		propreties.loadFromXML(new FileInputStream("test.xml"));
 		
 		nProd = Integer.parseInt(propreties.getProperty("nProd"));
 		nCons = Integer.parseInt(propreties.getProperty("nCons"));
@@ -25,29 +22,52 @@ public class TestProdCons {
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
-		//Avant de tout test, vérifie la valeur des producteurs et consommateur dans ton xml pour te rassurer 
-		//que ce que tu cherche à prouver fonctionne bien
+
+		loadData();// data from xml file
+		int nmsg = (int) (Math.random() * (maxProd - minProd)); //the number of messages
+		System.out.println(bufSz);
+		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime);
+		Message[] msgs; //Table of all generated messages
 		
+		Producteur[] prods = new Producteur[nProd]; //Table of all producers
+		Consommateur[] cons = new Consommateur[nCons]; ////Table of all consumers 
 		
+		 msgs = new Message[nmsg];
 		
-		//La limite de se code c'est que, les lecture et les écriture ne se font pas de manière bouclé
-		//donc le nombre de consommateur doit être égale au nombre de producteur sinon le code ne termine pas
-		loadData();
-		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz);
-		Message msg1 = new Message("test1");
+		for(int i = 0; i<nmsg; i++)
+			msgs[i] = new Message("This is message number " + i);
 		
-		Producteur[] prods = new Producteur[nProd];
-		Consommateur[] cons = new Consommateur[nCons];
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
 		
-		for(int i = 0; i<nProd; i++)
-			prods[i] = new Producteur(pcbuffer, msg1);
+		for(int i = 0, j = 0; i<nProd; i++, j++)
+			if(j < nmsg) {
+				prods[i] = new Producteur(pcbuffer, msgs[i]);
+			}
+		
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
 		
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
 		
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
+		
 		for(int i = 0; i<prods.length; i++)
+			if(prods[i] != null)
+				System.out.println("Producer :" + prods[i].msg);
+		
+		for(int i = 0; i<cons.length; i++)
+			if(cons[i] != null)
+				System.out.println("Consummer :" + cons[i].getName());
+		
+		for(int i = 0; i<prods.length; i++)
+			if(prods[i] != null)
 				prods[i].join();
 		for(int i = 0; i<cons.length; i++)
-			cons[i].join();
+			if(cons[i] != null)
+				cons[i].join();
+			
 		}
 	}
