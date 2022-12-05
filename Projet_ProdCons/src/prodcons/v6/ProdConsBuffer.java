@@ -9,12 +9,17 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
+	int consDelay;
+	int prodDelay;
+	int totmsg = 0;
 	
-	public ProdConsBuffer(int bufferSz) {
+	public ProdConsBuffer(int bufferSz, int consDelay, int prodDelay) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
+		this.prodDelay = prodDelay;
+		this.consDelay = consDelay;
 	}
 
 	
@@ -22,8 +27,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nfull == 0) {
 			wait();
 		}
+		Thread.sleep(prodDelay);
 		buffer[in] = msg;
 		in = (in + 1) % bufferSz;
+		totmsg++;
 		nempty++;
 		nfull--;
 		notifyAll();		
@@ -37,6 +44,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		//Putting the message m, n times in the buffer
 		for(int i = 0; i<n; i++) {
 			buffer[in] = m;
+			totmsg++;
+			Thread.sleep(prodDelay);
 			in = (in + 1) % bufferSz;
 			nempty++;
 			nfull--;
@@ -54,6 +63,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nempty == 0) {
 			wait();
 		}
+		Thread.sleep(consDelay);
 		Message msg = buffer[out];
 		buffer[out] = null; //freeing the spot of the taken message
 		out = (out + 1) % bufferSz;
@@ -74,13 +84,18 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			wait();
 		}
 		Message[] M = new Message[k];
+		int counter = 0;
 		for(int i = 0; i<k; i++) {
-			Message msg = buffer[out];
-			M[i] = msg;
-			out = (out + 1) % bufferSz;
+			if(buffer[i%bufferSz] != null) {
+				Thread.sleep(consDelay);
+				Message msg = buffer[out];
+				buffer[out]=null;
+				M[i] = msg;
+				out = (out + 1) % bufferSz;
+			}
 		}
-		nempty = nempty - k;
-		nfull = nfull + k;
+		nempty = nempty - counter;
+		nfull = nfull + counter;
 		notifyAll();
 		return M;
 	}
@@ -91,6 +106,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	
 	public int totmsg() {
-		return 0;
+		return totmsg;
 	}
 }

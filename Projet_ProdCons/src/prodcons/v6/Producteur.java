@@ -12,7 +12,7 @@ public class Producteur extends Thread{
 	
 	public void run() {
 		try {
-			pcbuffer.put(msg,5);
+			pcbuffer.put(msg,2);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
