@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+import java.util.Random;
+import java.util.Scanner;
 
 public class TestProdCons {
 	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
@@ -21,23 +23,50 @@ public class TestProdCons {
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
-		loadData();
-		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz);
-		Message msg1 = new Message("test1");
+		//Avant de tout test, vérifie la valeur des producteurs et consommateur dans ton xml pour te rassurer 
+		//que ce que tu cherche à prouver fonctionne bien
+				
+		//Pour celui-ci, il faut se rassurer que le nombre de producteur soit un multiple du nombre de consommateur
+		//Se  multiple est trouvé par la valeur de K (consommateur = k * producteur)
+		//La limite de se code c'est que, les lecture et les écriture ne se font pas de manière bouclé
+		//donc le nombre de consommateur doit être égale au nombre de producteur sinon le code ne termine pas
 		
-		Producteur[] prods = new Producteur[nProd];
-		Consommateur[] cons = new Consommateur[nCons];
+		loadData();// data from xml file
+		Random rand; //Used to generate a random number of messages
+		int nmsg = (int) (Math.random() * (maxProd - minProd)); //the number of messages
+		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime);
+		Message[] msgs; //Table of all generated messages
 		
-		for(int i = 0; i<nProd; i++)
-			prods[i] = new Producteur(pcbuffer, msg1);
+		Producteur[] prods = new Producteur[nProd]; //Table of all producers
+		Consommateur[] cons = new Consommateur[nCons]; ////Table of all consumers 
+		
+		 msgs = new Message[nmsg];
+		
+		for(int i = 0; i<nmsg; i++)
+			msgs[i] = new Message("This is message number " + i);
+		
+		for(int i = 0, j = 0; i<nProd; i++, j++)
+			if(j < nmsg)
+				prods[i] = new Producteur(pcbuffer, msgs[i]);
 		
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
 		
 		for(int i = 0; i<prods.length; i++)
-				prods[i].join();
+			if(prods[i] != null)
+				System.out.println("Producer :" + prods[i].msg);
+		
 		for(int i = 0; i<cons.length; i++)
-			cons[i].join();
+			if(cons[i] != null)
+				System.out.println("Consummer :" + cons[i].currentThread());
+		
+		for(int i = 0; i<prods.length; i++)
+			if(prods[i] != null)
+				prods[i].join();
+		//for(int i = 0; i<cons.length; i++)
+			//if(cons[i] != null)
+				//cons[i].join();
+		
 	}
 
 }

@@ -8,12 +8,16 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
+	int prodDelay;
+	int consDelay;
 	
-	public ProdConsBuffer(int bufferSz) {
+	public ProdConsBuffer(int bufferSz, int prodDelay, int consDelay) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
+		this.prodDelay = prodDelay;
+		this.consDelay = consDelay;
 	}
 
 	
@@ -21,6 +25,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nfull == 0) {
 			wait();
 		}
+		Thread.sleep(prodDelay);
 		buffer[in] = msg;
 		in = (in + 1) % bufferSz;
 		nempty++;
@@ -33,6 +38,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nempty == 0) {
 			wait();
 		}
+		Thread.sleep(consDelay);
 		Message msg = buffer[out];
 		out = (out + 1) % bufferSz;
 		nempty--;
