@@ -10,6 +10,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int out = 0;
 	int prodDelay;
 	int consDelay;
+	int totmsgs = 0;
 	
 	public ProdConsBuffer(int bufferSz, int prodDelay, int consDelay) {
 		this.bufferSz = bufferSz;
@@ -30,6 +31,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		in = (in + 1) % bufferSz;
 		nempty++;
 		nfull--;
+		totmsgs++;
 		notifyAll();		
 	}
 
@@ -40,6 +42,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		}
 		Thread.sleep(consDelay);
 		Message msg = buffer[out];
+		buffer[out] = null;
 		out = (out + 1) % bufferSz;
 		nempty--;
 		nfull++;
@@ -54,6 +57,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	
 	public int totmsg() {
-		return 0;
+		return totmsgs;
 	}
 }

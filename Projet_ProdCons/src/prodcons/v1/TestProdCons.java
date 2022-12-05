@@ -45,12 +45,22 @@ public class TestProdCons {
 		for(int i = 0; i<nmsg; i++)
 			msgs[i] = new Message("This is message number " + i);
 		
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
+		
 		for(int i = 0, j = 0; i<nProd; i++, j++)
-			if(j < nmsg)
+			if(j < nmsg) {
 				prods[i] = new Producteur(pcbuffer, msgs[i]);
+			}
+		
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
 		
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
+		
+		System.out.println("the total number of messages in the buffer currently "+pcbuffer.nmsg());
+		System.out.println("the total number of messages that has ever entered this buffer "+pcbuffer.totmsg());
 		
 		for(int i = 0; i<prods.length; i++)
 			if(prods[i] != null)
@@ -58,14 +68,14 @@ public class TestProdCons {
 		
 		for(int i = 0; i<cons.length; i++)
 			if(cons[i] != null)
-				System.out.println("Consummer :" + cons[i].currentThread());
+				System.out.println("Consummer :" + cons[i].getName());
 		
 		for(int i = 0; i<prods.length; i++)
 			if(prods[i] != null)
 				prods[i].join();
-		//for(int i = 0; i<cons.length; i++)
-			//if(cons[i] != null)
-				//cons[i].join();
+		for(int i = 0; i<cons.length; i++)
+			if(cons[i] != null)
+				cons[i].join();
 		
 	}
 
