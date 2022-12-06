@@ -31,7 +31,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	
 	public synchronized void put (Message m, int n) throws InterruptedException{
 		//TO DO
-		while (nfull == 0) {
+		while (nfull < n) {
 			wait();
 		}
 		//Putting the message m, n times in the buffer
@@ -70,7 +70,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	}
 	
 	public synchronized Message[] get(int k) throws InterruptedException{
-		while (nempty == 0) {
+		while (nempty < k) {
 			wait();
 		}
 		Message[] M = new Message[k];

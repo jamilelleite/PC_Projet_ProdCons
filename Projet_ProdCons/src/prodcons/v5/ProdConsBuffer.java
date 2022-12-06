@@ -42,7 +42,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	}
 	
 	public synchronized Message[] get(int k) throws InterruptedException{
-		while (nempty == 0) {
+		while (nempty < k) {
 			wait();
 		}
 		Message[] M = new Message[k];
