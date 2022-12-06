@@ -19,8 +19,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
-		Semaphore fifoP = new Semaphore(1);
-		Semaphore fifoC = new Semaphore(1);
+		this.fifoP = new Semaphore(1);
+		this.fifoC = new Semaphore(1);
 	}
 
 	
@@ -44,19 +44,19 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				while(nfull == 0){
 					wait();
 				}
-				buffer[in] = msg;
+				buffer[in] = m;
 				in = (in + 1) % bufferSz;
 				nempty++;
 				nfull--;
 				putCounter++;
 			}
 		}
-		notifyAll;
+		notifyAll();
 		fifoP.release();
 	}
 
 	public synchronized Message get() throws InterruptedException {
-
+		return null;
 	}
 	
 	public synchronized Message[] get(int k) throws InterruptedException{

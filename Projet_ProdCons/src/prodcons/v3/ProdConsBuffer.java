@@ -32,8 +32,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	
 	public Message get() throws InterruptedException {
 		notEmpty.acquire();
+		Message msg;
 		synchronized(this){
-			Message msg = buffer[out];
+			msg = buffer[out];
 			out = (out + 1) % bufferSz;
 		}
 		notifyAll();
