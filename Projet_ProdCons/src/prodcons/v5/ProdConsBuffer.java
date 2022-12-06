@@ -1,5 +1,7 @@
 package prodcons.v5;
 
+import java.util.concurrent.Semaphore;
+
 public class ProdConsBuffer implements IProdConsBuffer{
 
 	int bufferSz;
@@ -8,12 +10,14 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
+	Semaphore fifo;
 	
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
+		Semaphore fifo = new Semaphore(1);
 	}
 
 	
@@ -26,6 +30,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		nempty++;
 		nfull--;
 		notifyAll();		
+		// return this.get(1)[0]
 	}
 
 	
@@ -41,19 +46,26 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		return msg;
 	}
 	
-	public synchronized Message[] get(int k) throws InterruptedException{
-		while (nempty < k) {
-			wait();
-		}
+	public Message[] get(int k) throws InterruptedException{
+		int getCounter = 0;
+		Message msg;
 		Message[] M = new Message[k];
-		for(int i = 0; i<k; i++) {
-			Message msg = buffer[out];
-			M[i] = msg;
-			out = (out + 1) % bufferSz;
+		fifo.acquire();
+		synchronized(this) {
+			while(getCounter < k) {
+				while (nempty == 0) {
+					wait();
+				}
+				msg = buffer[out];
+				M[getCounter] = msg;
+				out = (out + 1) % bufferSz;
+				getCounter++;
+				nempty--;
+				nfull++;
+			}
 		}
-		nempty = nempty - k;
-		nfull = nfull + k;
 		notifyAll();
+		fifo.release();
 		return M;
 	}
 	
