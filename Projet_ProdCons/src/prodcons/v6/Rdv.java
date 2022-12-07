@@ -14,11 +14,12 @@ public class Rdv {
 	public void enter() throws InterruptedException {
 		mutex.acquire();
 		nplaces--;
-		if(nplaces > 0) {
+		if(nplaces + 1 > 0) {
 			mutex.release();
 			p.acquire();
 		} else {
-			p.release(nplaces-1);
+			// p.release(nplaces-1);
+			p.release(nplaces); // 1 producteur + (n-1) consommateurs
 			mutex.release();
 		}
 	}
