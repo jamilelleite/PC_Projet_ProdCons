@@ -17,7 +17,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
-		Semaphore fifo = new Semaphore(1);
+		this.fifo = new Semaphore(1);
 	}
 
 	
@@ -29,8 +29,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		in = (in + 1) % bufferSz;
 		nempty++;
 		nfull--;
-		notifyAll();		
-		// return this.get(1)[0]
+		notifyAll();	
 	}
 
 	
@@ -43,7 +42,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		nempty--;
 		nfull++;
 		notifyAll();
-		return msg;
+		return msg;	
+		// return this.get(1)[0]
 	}
 	
 	public Message[] get(int k) throws InterruptedException{
@@ -63,8 +63,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				nempty--;
 				nfull++;
 			}
+			notifyAll();
 		}
-		notifyAll();
 		fifo.release();
 		return M;
 	}
