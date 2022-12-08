@@ -1,7 +1,5 @@
 package prodcons.v6;
 
-import java.util.concurrent.Semaphore;
-
 public class ProdConsBuffer implements IProdConsBuffer{
 
 	int bufferSz;
@@ -10,7 +8,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
-	Semaphore rdv;
+	Rdv rdv;
 	
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -50,17 +48,14 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		notifyAll();
 	}
 
-	public synchronized Message get() throws InterruptedException {
-		int getCounter = 0;
+	public Message get() throws InterruptedException {
 		Message msg;
-		Message[] M = new Message[k];
 		synchronized(this) {
 			while (nempty == 0) {
 				wait();
 			}
 			msg = buffer[out];
 			out = (out + 1) % bufferSz;
-			getCounter++;
 			nempty--;
 			nfull++;
 		}
@@ -69,8 +64,25 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		return msg;
 	}
 	
-	public synchronized Message[] get(int k) throws InterruptedException{
-		return null;
+	public Message[] get(int k) throws InterruptedException{
+		int getCounter = 0;
+		Message[] msg = new Message[k];
+		while (getCounter < k) {
+			synchronized(this) {
+				while (nempty == 0) {
+					wait();
+				}
+				msg[getCounter] = buffer[out];
+				out = (out + 1) % bufferSz;
+				getCounter++;
+				nempty--;
+				nfull++;
+				notifyAll();
+			}
+			rdv.enter();
+		}
+		
+		return msg;
 	}
 	
 	public int nmsg() {
