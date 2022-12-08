@@ -10,8 +10,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
-	Rdv rdv;
-	Semaphore fifo = new Semaphore(1);
 	
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -34,14 +32,14 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	
 	public void put (Message m, int n) throws InterruptedException{
 		int putCounter = 0;
-		fifo.acquire();
+		Rdv rdv = new Rdv(n);
 		synchronized(this){
-			rdv = new Rdv(n);
 			while(putCounter < n){
 				while(nfull == 0){
 					wait();
 				}
 				buffer[in] = m;
+				buffer[in].setRdv(rdv);
 				in = (in + 1) % bufferSz;
 				nempty++;
 				nfull--;
@@ -49,9 +47,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				notifyAll();
 			}
 		}
-		rdv.enter();
-		fifo.release();
-		
+		m.getRdv().enter();
 	}
 
 	public Message get() throws InterruptedException {
@@ -66,19 +62,20 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			nfull++;
 			notifyAll();
 		}
-		rdv.enter();
 		return msg;
 	}
 	
 	public Message[] get(int k) throws InterruptedException{
 		int getCounter = 0;
 		Message[] msg = new Message[k];
+		Rdv rdv;
 		while (getCounter < k) {
 			synchronized(this) {
 				while (nempty == 0) {
 					wait();
 				}
 				msg[getCounter] = buffer[out];
+				rdv = msg[getCounter].getRdv();
 				out = (out + 1) % bufferSz;
 				getCounter++;
 				nempty--;
@@ -86,6 +83,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				notifyAll();
 			}
 			rdv.enter();
+			
 		}
 		
 		return msg;
