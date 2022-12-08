@@ -2,16 +2,18 @@ package prodcons.v6;
 
 public class Consommateur extends Thread{
 	ProdConsBuffer pcbuffer;
-	Message msg;
+	int nplaces;
+	Message[] msg;
 
-	public Consommateur(ProdConsBuffer pcbuffer) {
+	public Consommateur(ProdConsBuffer pcbuffer, int nplaces) {
 		this.pcbuffer = pcbuffer;
+		this.nplaces = nplaces;
 		start();
 	}
 	
 	public void run() {
 		try {
-			msg = pcbuffer.get();
+			msg = pcbuffer.get(nplaces);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

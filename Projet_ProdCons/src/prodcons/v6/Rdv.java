@@ -4,17 +4,19 @@ import java.util.concurrent.Semaphore;
 
 public class Rdv {
 	int nplaces;
+	int counter;
 	Semaphore p = new Semaphore(0);
 	Semaphore mutex = new Semaphore(1);
 	
 	public Rdv(int nplaces) {
 		this.nplaces = nplaces;
+		this.counter = nplaces;
 	}
 	
 	public void enter() throws InterruptedException {
 		mutex.acquire();
-		nplaces--;
-		if(nplaces + 1 > 0) {
+		counter--;
+		if(counter + 1 > 0) {
 			mutex.release();
 			p.acquire();
 		} else {

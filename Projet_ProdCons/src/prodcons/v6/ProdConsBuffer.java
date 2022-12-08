@@ -42,10 +42,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				nempty++;
 				nfull--;
 				putCounter++;
+				notifyAll();
 			}
 		}
 		rdv.enter();
-		notifyAll();
 	}
 
 	public Message get() throws InterruptedException {
@@ -58,9 +58,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			out = (out + 1) % bufferSz;
 			nempty--;
 			nfull++;
+			notifyAll();
 		}
 		rdv.enter();
-		notifyAll();
 		return msg;
 	}
 	
