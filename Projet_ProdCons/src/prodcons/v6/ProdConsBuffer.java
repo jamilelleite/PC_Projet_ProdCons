@@ -1,5 +1,7 @@
 package prodcons.v6;
 
+import java.util.concurrent.Semaphore;
+
 public class ProdConsBuffer implements IProdConsBuffer{
 
 	int bufferSz;
@@ -9,6 +11,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int in = 0;
 	int out = 0;
 	Rdv rdv;
+	Semaphore fifo = new Semaphore(1);
 	
 	public ProdConsBuffer(int bufferSz) {
 		this.bufferSz = bufferSz;
@@ -31,8 +34,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	
 	public void put (Message m, int n) throws InterruptedException{
 		int putCounter = 0;
-		rdv = new Rdv(n);
+		fifo.acquire();
 		synchronized(this){
+			rdv = new Rdv(n);
 			while(putCounter < n){
 				while(nfull == 0){
 					wait();
@@ -46,6 +50,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			}
 		}
 		rdv.enter();
+		fifo.release();
+		
 	}
 
 	public Message get() throws InterruptedException {
