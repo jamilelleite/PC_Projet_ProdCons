@@ -11,14 +11,16 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int prodDelay;
 	int consDelay;
 	int totmsgs = 0;
+	int nProd = 0;
 	
-	public ProdConsBuffer(int bufferSz, int prodDelay, int consDelay) {
+	public ProdConsBuffer(int bufferSz, int prodDelay, int consDelay, int nProd) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
 		this.prodDelay = prodDelay;
 		this.consDelay = consDelay;
+		this.nProd = nProd;
 	}
 
 	

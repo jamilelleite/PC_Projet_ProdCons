@@ -27,7 +27,7 @@ public class TestProdCons {
 		loadData();// data from xml file
 		Random rand; //Used to generate a random number of messages
 		int nmsg = (int) (Math.random() * (maxProd - minProd)); //the number of messages
-		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime);
+		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime, nProd);
 		Message[] msgs; //Table of all generated messages
 		System.out.println(bufSz);
 		Producteur[] prods = new Producteur[nProd]; //Table of all producers
