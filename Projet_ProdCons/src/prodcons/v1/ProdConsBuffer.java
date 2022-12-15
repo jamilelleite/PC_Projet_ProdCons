@@ -28,6 +28,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nfull == 0) {
 			wait();
 		}
+		System.out.println(msg.message + " is coming in and the number of active producers per messages is " + nProd);
 		Thread.sleep(prodTime);
 		buffer[in] = msg;
 		in = (in + 1) % bufferSz;
@@ -45,6 +46,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		}
 		Thread.sleep(consTime);
 		Message msg = buffer[out];
+		System.out.println(msg.message + " is going out");
 		out = (out + 1) % bufferSz;
 		nempty--;
 		nfull++;

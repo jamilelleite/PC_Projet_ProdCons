@@ -14,7 +14,7 @@ public class Producteur extends Thread{
 	public void run() {
 		try {
 			for(int i = 0; i< nmsgProd; i++) {
-				this.msg = new Message(this.getId() + " Message number " + i);
+				this.msg = new Message("Thread " + this.getId() + " Message number " + i + " of " + (nmsgProd-1));
 				pcbuffer.put(msg);
 			}
 		} catch (InterruptedException e) {

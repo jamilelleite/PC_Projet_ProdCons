@@ -17,8 +17,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	public ProdConsBuffer(int bufferSz, int prodTime, int consTime, int nProd) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
-		notEmpty = new Semaphore(bufferSz);
-		notFull = new Semaphore(0);
+		notEmpty = new Semaphore(0);
+		notFull = new Semaphore(bufferSz);
 		this.prodTime = prodTime;
 		this.consTime = consTime;
 		this.nProd = nProd;
@@ -28,6 +28,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	public void put(Message msg) throws InterruptedException {
 		notFull.acquire();
 		synchronized(this){
+			System.out.println(msg.message + " is coming in and the number of active producers per messages is " + nProd);
 			Thread.sleep(prodTime);
 			buffer[in] = msg;
 			in = (in + 1) % bufferSz;
@@ -43,6 +44,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		synchronized(this){
 			Thread.sleep(consTime);
 			msg = buffer[out];
+			System.out.println(msg.message + " is going out");
 			out = (out + 1) % bufferSz;
 			nProd--;
 			notifyAll();
