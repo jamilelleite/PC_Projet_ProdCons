@@ -10,13 +10,18 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int nempty;
 	int in = 0;
 	int out = 0;
+	int prodTime;
+	int consTime;
+	int totmsg = 0;
 	Semaphore fifo;
 	
-	public ProdConsBuffer(int bufferSz) {
+	public ProdConsBuffer(int bufferSz, int prodTime, int consTime) {
 		this.bufferSz = bufferSz;
 		this.buffer = new Message[bufferSz];
 		this.nfull = bufferSz;
 		this.nempty = 0;
+		this.prodTime = prodTime;
+		this.consTime = consTime;
 		this.fifo = new Semaphore(1);
 	}
 
@@ -25,24 +30,26 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		while (nfull == 0) {
 			wait();
 		}
+		Thread.sleep(prodTime);
 		buffer[in] = msg;
 		in = (in + 1) % bufferSz;
 		nempty++;
 		nfull--;
+		totmsg++;
 		notifyAll();	
 	}
 
 	
 	public synchronized Message get() throws InterruptedException {
-		while (nempty == 0) {
-			wait();
-		}
-		Message msg = buffer[out];
-		out = (out + 1) % bufferSz;
-		nempty--;
-		nfull++;
-		notifyAll();
-		return msg;	
+//		while (nempty == 0) {
+//			wait();
+//		}
+//		Message msg = buffer[out];
+//		out = (out + 1) % bufferSz;
+//		nempty--;
+//		nfull++;
+//		notifyAll();
+		return this.get(1)[0];	
 		// return this.get(1)[0]
 	}
 	
@@ -56,6 +63,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				while (nempty == 0) {
 					wait();
 				}
+				Thread.sleep(consTime);
 				msg = buffer[out];
 				M[getCounter] = msg;
 				out = (out + 1) % bufferSz;

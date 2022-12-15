@@ -6,7 +6,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class TestProdCons {
-	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
+	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd, minCons, maxCons;
 	
 	static void loadData() throws InvalidPropertiesFormatException, IOException{
 		Properties propreties = new Properties();
@@ -19,38 +19,26 @@ public class TestProdCons {
 		consTime = Integer.parseInt(propreties.getProperty("consTime"));
 		minProd = Integer.parseInt(propreties.getProperty("minProd"));
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
+		minCons = Integer.parseInt(propreties.getProperty("minProd"));
+		maxCons = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
-		//Avant de tout test, vérifie la valeur des producteurs et consommateur dans ton xml pour te rassurer 
-		//que ce que tu cherche à prouver fonctionne bien
-		
-		//Pour celui-ci, il faut se rassurer que le nombre de producteur soit un multiple du nombre de consommateur
-		//Se  multiple est trouvé par la valeur de K (producteur = k * consommateur)
-		//La limite de se code c'est que, les lecture et les écriture ne se font pas de manière bouclé
-		//donc le nombre de consommateur doit être égale au nombre de producteur sinon le code ne termine pas
 		loadData();
-		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz);
-		Message msg1 = new Message("test1");
+		
+		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime);
+		
+		//Message[] msgs = new Message[nmsg*nProd];		
 		
 		Producteur[] prods = new Producteur[nProd];
 		Consommateur[] cons = new Consommateur[nCons];
 		
+		//for(int i = 0; i<(nmsg*nProd); i++)
+		//	msgs[i] = new Message("This is message number "+i);
 		for(int i = 0; i<nProd; i++)
-			prods[i] = new Producteur(pcbuffer, msg1);
-	
-		for(int i = 0; i<nCons; i++)
-			cons[i] = new Consommateur(pcbuffer);
+				prods[i] = new Producteur(pcbuffer, minProd, maxProd);
 		
 		for(int i = 0; i<nCons; i++)
-			System.out.println("Consumers are " + cons[i].getName() + "\n");
-		
-		for(int i = 0; i<nProd; i++)
-			System.out.println("Producers are " + prods[i].getName() + "\n");
-		
-		for(int i = 0; i<prods.length; i++)
-				prods[i].join();
-		for(int i = 0; i<cons.length; i++)
-			cons[i].join();
+			cons[i] = new Consommateur(pcbuffer, minCons, maxCons);
 	}
 
 }
