@@ -23,20 +23,21 @@ public class TestProdCons {
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
 		loadData();
 		
-		int nmsg = (int) (Math.random()*(maxProd-minProd));
+		int nmsg = (int) ((Math.random()*(maxProd-minProd))+minProd);
 		
-		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime, nmsg);
+		int totmsgs = nmsg*nProd;
 		
-		Message[] msgs = new Message[nmsg*nProd];		
+		ProdConsBuffer pcbuffer = new ProdConsBuffer(bufSz, prodTime, consTime, totmsgs);
+		
+		//Message[] msgs = new Message[nmsg*nProd];		
 		
 		Producteur[] prods = new Producteur[nProd];
 		Consommateur[] cons = new Consommateur[nCons];
 		
-		for(int i = 0; i<(nmsg*nProd); i++)
-			msgs[i] = new Message("This is message number "+i);
-		for(int i = 0, j = 0; i<nProd; i++, j++)
-			if(j < nmsg)
-				prods[i] = new Producteur(pcbuffer, msgs[i], nmsg);
+		//for(int i = 0; i<(nmsg*nProd); i++)
+		//	msgs[i] = new Message("This is message number "+i);
+		for(int i = 0; i<nProd; i++)
+				prods[i] = new Producteur(pcbuffer, nmsg);
 		
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
