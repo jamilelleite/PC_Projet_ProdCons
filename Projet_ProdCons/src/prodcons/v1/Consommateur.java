@@ -11,7 +11,11 @@ public class Consommateur extends Thread{
 	
 	public void run() {
 		try {
-			msg = pcbuffer.get();
+			while(true) {
+				msg = pcbuffer.get();
+				if(pcbuffer.nmsg() == 0 && pcbuffer.nProd == 0)
+					System.exit(0);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
