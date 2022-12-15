@@ -42,12 +42,12 @@ public class TestProdCons {
 		for(int i = 0; i<nCons; i++)
 			cons[i] = new Consommateur(pcbuffer);
 		
-		for(int i = 0; i<prods.length; i++)
-			if(prods[i] != null)
-				prods[i].join();
-		for(int i = 0; i<cons.length; i++)
-			if(cons[i] != null)
-				cons[i].join();
+//		for(int i = 0; i<prods.length; i++)
+//			if(prods[i] != null)
+//				prods[i].join();
+//		for(int i = 0; i<cons.length; i++)
+//			if(cons[i] != null)
+//				cons[i].join();
 	}
 
 }
