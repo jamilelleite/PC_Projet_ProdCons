@@ -17,7 +17,7 @@ public class Producteur extends Thread{
 		try {
 			int nmsgProd = (int) ((Math.random()*(maxProd-minProd))+minProd);
 			for(int i = 0; i< nmsgProd; i++) {
-				this.msg = new Message(this.getId() + " Message number " + i);
+				this.msg = new Message("Producer id: " + this.getId() + "  message number " + i);
 				pcbuffer.put(msg);
 			}
 		} catch (InterruptedException e) {

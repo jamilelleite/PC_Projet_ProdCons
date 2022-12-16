@@ -32,6 +32,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 		}
 		Thread.sleep(prodTime);
 		buffer[in] = msg;
+		System.out.println("Message being written: " + msg.message);
 		in = (in + 1) % bufferSz;
 		nempty++;
 		nfull--;
@@ -65,6 +66,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				}
 				Thread.sleep(consTime);
 				msg = buffer[out];
+				System.out.println("Message " + getCounter + "/" + k + ": " + msg + " being read by : " + this.hashCode());
 				M[getCounter] = msg;
 				out = (out + 1) % bufferSz;
 				getCounter++;
