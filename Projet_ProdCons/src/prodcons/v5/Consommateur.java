@@ -15,8 +15,10 @@ public class Consommateur extends Thread{
 	
 	public void run() {
 		try {
-			int nmsgCons = (int) ((Math.random()*(maxCons-minCons))+minCons);
-			msg = pcbuffer.get(nmsgCons);
+			while(true) {
+				int nmsgCons = (int) ((Math.random()*(maxCons-minCons))+minCons);
+				msg = pcbuffer.get(nmsgCons);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
