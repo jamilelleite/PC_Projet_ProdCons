@@ -66,7 +66,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 				}
 				Thread.sleep(consTime);
 				msg = buffer[out];
-				System.out.println("Message " + getCounter + "/" + k + ": " + msg + " being read by : " + this.hashCode());
+				System.out.println("Message " + getCounter + "/" + k + ": " + msg.message);
 				M[getCounter] = msg;
 				out = (out + 1) % bufferSz;
 				getCounter++;
