@@ -56,46 +56,49 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	}
 
 	public Message get() throws InterruptedException {
-//		Message msg;
-//		synchronized(this) {
-//			while (nempty == 0) {
-//				wait();
-//			}
-//			msg = buffer[out];
-//			out = (out + 1) % bufferSz;
-//			nempty--;
-//			nfull++;
-//			notifyAll();
-//		}
-//		return msg;
-		return get(1)[0];
-	}
-	
-	public Message[] get(int k) throws InterruptedException{
-		int getCounter = 0;
-		Message[] msg = new Message[k];
+		Message msg;
 		Rdv rdv;
-		while (getCounter < k) {
-			synchronized(this) {
-				while (nempty == 0) {
-					wait();
-				}
-				Thread.sleep(consTime);
-				msg[getCounter] = buffer[out];
-				rdv = msg[getCounter].getRdv();
-				System.out.println("Message " + getCounter + "/" + k + ": " + msg[getCounter].message);
-				out = (out + 1) % bufferSz;
-				getCounter++;
-				nempty--;
-				nfull++;
-				notifyAll();
+		synchronized(this) {
+			while (nempty == 0) {
+				wait();
 			}
-			rdv.enter();
-			
+			Thread.sleep(consTime);
+			msg = buffer[out];
+			rdv = msg.getRdv();
+			out = (out + 1) % bufferSz;
+			nempty--;
+			nfull++;
+			notifyAll();
 		}
-		
+		rdv.enter();
 		return msg;
 	}
+	
+//	public Message[] get(int k) throws InterruptedException{
+//		int getCounter = 0;
+//		Message[] msg = new Message[k];
+//		Rdv rdv;
+//		while (getCounter < k) {
+//			synchronized(this) {
+//				while (nempty == 0) {
+//					wait();
+//				}
+//				Thread.sleep(consTime);
+//				msg[getCounter] = buffer[out];
+//				rdv = msg[getCounter].getRdv();
+//				System.out.println("Message " + getCounter + "/" + k + ": " + msg[getCounter].message);
+//				out = (out + 1) % bufferSz;
+//				getCounter++;
+//				nempty--;
+//				nfull++;
+//				notifyAll();
+//			}
+//			rdv.enter();
+//			
+//		}
+//		
+//		return msg;
+//	}
 	
 	public int nmsg() {
 		return nempty;
