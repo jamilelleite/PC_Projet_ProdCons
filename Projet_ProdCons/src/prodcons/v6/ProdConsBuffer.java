@@ -24,14 +24,15 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	
 	public synchronized void put(Message msg) throws InterruptedException {
-		while (nfull == 0) {
-			wait();
-		}
-		buffer[in] = msg;
-		in = (in + 1) % bufferSz;
-		nempty++;
-		nfull--;
-		notifyAll();		
+//		while (nfull == 0) {
+//			wait();
+//		}
+//		buffer[in] = msg;
+//		in = (in + 1) % bufferSz;
+//		nempty++;
+//		nfull--;
+//		notifyAll();		
+		put(msg,1);
 	}
 	
 	public void put (Message m, int n) throws InterruptedException{
@@ -43,6 +44,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 					wait();
 				}
 				Thread.sleep(prodTime);
+				System.out.println("Message " + m.message + " being written " + n + " times");
 				buffer[in] = m;
 				buffer[in].setRdv(rdv);
 				in = (in + 1) % bufferSz;
@@ -64,6 +66,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			}
 			Thread.sleep(consTime);
 			msg = buffer[out];
+			System.out.println("Message being read: " + msg.message);
 			rdv = msg.getRdv();
 			out = (out + 1) % bufferSz;
 			nempty--;

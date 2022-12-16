@@ -6,7 +6,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class TestProdCons {
-	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd, minCons, maxCons;
+	static int nProd, nCons, bufSz, prodTime, consTime, minProd, maxProd;
 	
 	static void loadData() throws InvalidPropertiesFormatException, IOException{
 		Properties propreties = new Properties();
@@ -19,8 +19,6 @@ public class TestProdCons {
 		consTime = Integer.parseInt(propreties.getProperty("consTime"));
 		minProd = Integer.parseInt(propreties.getProperty("minProd"));
 		maxProd = Integer.parseInt(propreties.getProperty("maxProd"));
-		minCons = Integer.parseInt(propreties.getProperty("minProd"));
-		maxCons = Integer.parseInt(propreties.getProperty("maxProd"));
 	}
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException{
 		loadData();
@@ -34,7 +32,7 @@ public class TestProdCons {
 			prods[i] = new Producteur(pcbuffer, minProd, maxProd);
 		
 		for(int i = 0; i<nCons; i++)
-			cons[i] = new Consommateur(pcbuffer, minCons, maxCons);
+			cons[i] = new Consommateur(pcbuffer);
 		
 		for(int i = 0; i<prods.length; i++)
 				prods[i].join();
